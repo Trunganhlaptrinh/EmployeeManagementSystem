@@ -288,3 +288,25 @@ class Database:
         rows = cursor.fetchall()
         conn.close()
         return rows
+    # model/database.py - Thêm vào cuối class Database
+
+    def create_user(self, username, password, name, position='Nhân viên', department='', base_salary=0):
+        """Tạo tài khoản user mới"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        
+        # Kiểm tra username đã tồn tại chưa
+        cursor.execute('SELECT * FROM employees WHERE username = ?', (username,))
+        if cursor.fetchone():
+            conn.close()
+            return False, "Username đã tồn tại"
+        
+        # Thêm user mới (mặc định position là 'Nhân viên')
+        cursor.execute('''
+            INSERT INTO employees (username, password, name, position, department, base_salary)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (username, password, name, position, department, base_salary))
+        
+        conn.commit()
+        conn.close()
+        return True, "Tạo tài khoản thành công!"

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Quản lý người dùng{% endblock %}
+
+{% block content %}
+<div class="page">
+    <h1>👥 Quản lý người dùng</h1>
+    
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tên đăng nhập</th>
+                    <th>Họ tên</th>
+                    <th>Vị trí</th>
+                    <th>Phòng ban</th>
+                    <th>Lương cơ bản</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.position or 'Nhân viên' }}</td>
+                    <td>{{ user.department or '--' }}</td>
+                    <td>{{ "{:,.0f}".format(user.base_salary or 0) }}</td>
+                    <td>
+                        <a href="/admin/user/{{ user.id }}/edit" class="btn btn-secondary btn-sm">Sửa</a>
+                        <a href="/admin/user/{{ user.id }}/delete" class="btn btn-danger btn-sm" 
+                           onclick="return confirm('Xóa user này?')">Xóa</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="7">Chưa có user nào</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div style="margin-top: 1rem;">
+        <a href="/admin/users/create" class="btn btn-primary">+ Thêm user mới</a>
+    </div>
+</div>
+{% endblock %}

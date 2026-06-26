@@ -36,6 +36,11 @@ class EmployeeController:
             'base_salary': user[6]
         }
         return True, "Login successful"
+
+    def register_user(self, username, password, name):
+        """Đăng ký tài khoản user mới"""
+        # Hash password trong thực tế, nhưng đơn giản hóa
+        return self.db.create_user(username, password, name)
     
     def logout(self):
         self.current_user = None

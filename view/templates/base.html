@@ -16,6 +16,13 @@
                 <a href="/attendance">Điểm danh</a>
                 <a href="/leave">Nghỉ phép</a>
                 <a href="/salary">Lương thưởng</a>
+
+                {% if session.get('username') == 'admin' %}
+                <div class="nav-dropdown">
+                    <a href="/admin/users">👥 Quản lý user</a>
+                </div>
+                {% endif %}
+
                 <a href="/logout" class="nav-logout">Đăng xuất</a>
             </div>
             {% endif %}

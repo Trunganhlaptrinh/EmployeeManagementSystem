@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if mode == 'create' %}Thêm user mới{% else %}Sửa user{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="page">
+    <h1>
+        {% if mode == 'create' %}
+        ➕ Thêm user mới
+        {% else %}
+        ✏️ Sửa user: {{ user.name }}
+        {% endif %}
+    </h1>
+    
+    {% if error %}
+    <div class="alert error">{{ error }}</div>
+    {% endif %}
+    
+    <div class="form-container" style="max-width: 500px; background: white; padding: 2rem; border-radius: 12px;">
+        <form method="POST">
+            {% if mode == 'create' %}
+            <div class="form-group">
+                <label for="username">Tên đăng nhập *</label>
+                <input type="text" id="username" name="username" required 
+                       value="{{ user.username if user else '' }}"
+                       placeholder="Ít nhất 3 ký tự">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Mật khẩu *</label>
+                <input type="password" id="password" name="password" required 
+                       placeholder="Ít nhất 6 ký tự">
+            </div>
+            {% endif %}
+            
+            <div class="form-group">
+                <label for="name">Họ và tên *</label>
+                <input type="text" id="name" name="name" required 
+                       value="{{ user.name if user else '' }}"
+                       placeholder="Nhập họ tên">
+            </div>
+            
+            <div class="form-group">
+                <label for="position">Vị trí</label>
+                <select id="position" name="position">
+                    <option value="Nhân viên" {% if user and user.position == 'Nhân viên' %}selected{% endif %}>Nhân viên</option>
+                    <option value="Developer" {% if user and user.position == 'Developer' %}selected{% endif %}>Developer</option>
+                    <option value="Tester" {% if user and user.position == 'Tester' %}selected{% endif %}>Tester</option>
+                    <option value="Designer" {% if user and user.position == 'Designer' %}selected{% endif %}>Designer</option>
+                    <option value="Team Lead" {% if user and user.position == 'Team Lead' %}selected{% endif %}>Team Lead</option>
+                    <option value="Manager" {% if user and user.position == 'Manager' %}selected{% endif %}>Manager</option>
+                    <option value="HR" {% if user and user.position == 'HR' %}selected{% endif %}>HR</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="department">Phòng ban</label>
+                <input type="text" id="department" name="department" 
+                       value="{{ user.department if user else '' }}"
+                       placeholder="VD: IT, QA, Design,...">
+            </div>
+            
+            <div class="form-group">
+                <label for="base_salary">Lương cơ bản (VND)</label>
+                <input type="number" id="base_salary" name="base_salary" 
+                       value="{{ user.base_salary if user else 0 }}"
+                       placeholder="0">
+            </div>
+            
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <button type="submit" class="btn btn-primary">
+                    {% if mode == 'create' %}Thêm user{% else %}Cập nhật{% endif %}
+                </button>
+                <a href="/admin/users" class="btn btn-secondary">Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -53,3 +53,31 @@ class Validation:
         if position not in valid_positions:
             return False, f"Position must be one of: {', '.join(valid_positions)}"
         return True, ""
+    # util/validation.py - Thêm các method sau
+
+    @staticmethod
+    def validate_register(username, password, confirm_password, name):
+        """Kiểm tra thông tin đăng ký"""
+        # Kiểm tra username
+        if Validation.is_empty(username):
+            return False, "Username không được để trống"
+        if len(username) < 3:
+            return False, "Username phải có ít nhất 3 ký tự"
+        if not username.isalnum():
+            return False, "Username chỉ được chứa chữ và số"
+        
+        # Kiểm tra password
+        if Validation.is_empty(password):
+            return False, "Password không được để trống"
+        if len(password) < 6:
+            return False, "Password phải có ít nhất 6 ký tự"
+        
+        # Kiểm tra confirm password
+        if password != confirm_password:
+            return False, "Mật khẩu xác nhận không khớp"
+        
+        # Kiểm tra tên
+        if Validation.is_empty(name):
+            return False, "Họ tên không được để trống"
+        
+        return True, "OK"
