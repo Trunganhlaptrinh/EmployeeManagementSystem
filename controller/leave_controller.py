@@ -6,6 +6,15 @@ from model.leave      import Leave
 from util.file_helper  import FileHelper
 from util.validation   import Validation
 
+def _attach_names(leaves: list) -> list:
+    """Gắn employee_name vào mỗi đơn nghỉ dựa trên employee_id"""
+    employees = FileHelper.read_all("employees")
+    # tạo dict id → name để tra nhanh (giống HashMap trong Java)
+    emp_map = {e["id"]: e["name"] for e in employees}
+    for lv in leaves:
+        lv["employee_name"] = emp_map.get(lv["employee_id"], f"ID {lv['employee_id']}")
+    return leaves
+
 leave_bp = Blueprint("leave", __name__)
 
 # ========================
@@ -58,6 +67,9 @@ def get_leaves():
     status_filter = request.args.get("status")
     if status_filter:
         result = [lv for lv in result if lv["status"] == status_filter]
+
+    # gắn tên nhân viên vào mỗi đơn trước khi trả về
+    result = _attach_names(result)
 
     return jsonify({"success": True, "data": result})
 

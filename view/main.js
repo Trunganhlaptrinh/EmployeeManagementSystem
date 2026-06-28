@@ -205,7 +205,7 @@ function renderSidebar(currentPage, user) {
   const adminLinks = isAdmin ? `
     <a class="nav-item ${currentPage === 'employees' ? 'active' : ''}" href="employees.html">
       <img src="image/logo_quan_li_nhan_vien.png" style="height:18px;width:18px;object-fit:contain;" />
-      Quản lí nhân viên
+      HR
     </a>
   ` : "";
 

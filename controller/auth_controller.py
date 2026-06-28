@@ -340,3 +340,34 @@ def upload_cover():
             return jsonify({"success": True, "message": "Cập nhật ảnh bìa thành công"})
 
     return jsonify({"success": False, "message": "Không tìm thấy"}), 404
+
+
+# ========================
+# CẬP NHẬT NHÂN VIÊN (chỉ admin)
+# PUT /api/auth/employees/<id>
+# ========================
+@auth_bp.route("/employees/<int:emp_id>", methods=["PUT"])
+def update_employee(emp_id):
+    if session.get("role") != "admin":
+        return jsonify({"success": False, "message": "Không có quyền"}), 403
+
+    data = request.get_json()
+    try:
+        name       = Validation.check_name(data.get("name", ""))
+        department = Validation.check_not_empty(data.get("department", ""), "Phòng ban")
+        role       = Validation.check_role(data.get("role", ""))
+        base_salary = Validation.check_money(data.get("base_salary", 0), "Lương cơ bản")
+    except ValueError as e:
+        return jsonify({"success": False, "message": str(e)}), 400
+
+    employees = FileHelper.read_all("employees")
+    for i, emp in enumerate(employees):
+        if emp["id"] == emp_id:
+            employees[i]["name"]        = name
+            employees[i]["department"]  = department
+            employees[i]["role"]        = role
+            employees[i]["base_salary"] = base_salary
+            FileHelper.write_all("employees", employees)
+            return jsonify({"success": True, "message": "Cập nhật nhân viên thành công"})
+
+    return jsonify({"success": False, "message": "Không tìm thấy nhân viên"}), 404

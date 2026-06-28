@@ -209,7 +209,8 @@
       <p>Gửi và quản lý đơn xin nghỉ phép</p>
     </div>
 
-    <div class="card" style="display:flex;align-items:center;justify-content:space-between;padding:18px 24px;">
+    <!-- Chỉ hiển thị cho nhân viên, admin không cần xin nghỉ -->
+    <div class="card" id="request-leave-card" style="display:none;align-items:center;justify-content:space-between;padding:18px 24px;">
       <div>
         <h2 style="margin-bottom:4px;font-size:1.1rem;">Xin nghỉ phép</h2>
         <p style="color:var(--muted);font-size:.85rem;" id="selected-summary">Chưa chọn ngày nào</p>
@@ -236,6 +237,7 @@
         <table>
           <thead>
             <tr>
+              <th id="col-name" style="display:none;">Họ tên</th>
               <th>Từ ngày</th>
               <th>Đến ngày</th>
               <th>Số ngày</th>
@@ -245,7 +247,7 @@
             </tr>
           </thead>
           <tbody id="leave-body">
-            <tr><td colspan="6" class="empty">Đang tải...</td></tr>
+            <tr><td colspan="7" class="empty">Đang tải...</td></tr>
           </tbody>
         </table>
       </div>
@@ -308,9 +310,16 @@
     isAdmin = currentUser.role === "admin";
     renderSidebar("leave", currentUser);
 
-    // Nếu là Admin, hiển thị cột thao tác
     if (isAdmin) {
+      // Admin: hiện cột Họ tên + cột thao tác, ẩn card xin nghỉ
+      document.getElementById("col-name").style.display = "";
       document.getElementById("admin-actions-col").style.display = "";
+      // card "Xin nghỉ phép" giữ display:none
+    } else {
+      // User: hiện card xin nghỉ, hiện cột tên của chính mình, ẩn cột thao tác admin
+      document.getElementById("request-leave-card").style.display = "flex";
+      document.getElementById("col-name").style.display = "";
+      // cột thao tác admin vẫn ẩn
     }
 
     const now = new Date();
@@ -508,14 +517,14 @@
     const tbody   = document.getElementById("leave-body");
 
     if (!res.success) {
-      tbody.innerHTML = `<tr><td colspan="6" class="empty">Lỗi tải dữ liệu</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="7" class="empty">Lỗi tải dữ liệu</td></tr>`;
       return;
     }
 
     allLeaves = res.data;
 
     if (res.data.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="6" class="empty">Không có đơn nghỉ phép nào</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="7" class="empty">Không có đơn nghỉ phép nào</td></tr>`;
       return;
     }
 
@@ -524,6 +533,9 @@
       const d1   = new Date(lv.from_date);
       const d2   = new Date(lv.to_date);
       const days = Math.round((d2-d1)/86400000)+1;
+
+      // tên nhân viên (backend đã gắn sẵn employee_name)
+      const nameCell = `<td style="font-weight:500;">${lv.employee_name || "—"}</td>`;
 
       let actions = "";
       // CHỈ ADMIN MỚI CÓ QUYỀN DUYỆT/TỪ CHỐI
@@ -547,6 +559,7 @@
 
       return `
         <tr>
+          ${nameCell}
           <td>${formatDate(lv.from_date)}</td>
           <td>${formatDate(lv.to_date)}</td>
           <td><span class="badge badge-blue">${days} ngày</span></td>
